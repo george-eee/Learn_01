@@ -2732,3 +2732,173 @@
 //也就是说数组传参时传的是首元素地址-->>即一个指针 
 //那么sizeof(arr)就恒等于8(x64中一个指针占据8字节大小) 而不是整个数组的大小 所以不能在...
 
+//二维数组名的理解
+//int main()
+//{
+//	int arr[3][4] = { 0 };//总共12个整型数据
+//	int c = sizeof(arr);
+//	printf("%d\n", c);//48=12*4 可见arr的大小就是整个二维数组的元素所占的大小
+//	printf("%p\n", arr);
+//	//非两个特例下二维数组的数组名也表示首元素的地址名 并且由前面知识点可知 二维数组的首元素是第一行的一维数组
+//	//虽然打印一维数组地址时又用首元素arr[0][0]的地址来代表 但是注意分清楚本质
+//	//在一维数组中 我们需要计算元素个数时采用的数组大小/首元素大小的做法
+//	//那么在二维数组中 我们就可以用二维数组大小/首个元素(一维数组)大小来计算
+//	int d = sizeof(arr) / sizeof(arr[0]);//这里是第一个特例 sizeof(数组名)计算整个数组大小 arr[0]代表第一行对应一维数组的大小
+//	printf("%d\n", d);//3
+//	//同理 我们还可以计算二维数组的列数=二维数组中中一维数组的的元素个数
+//	int e = sizeof(arr[0]) / sizeof(arr[0][0]);//这里其实就是一维数组元素个数的计算方式 只是arr变成了arr[0] arr[0]变成了arr[0][0]
+//	printf("%d\n", e);
+//	//sizeof返回类型是size_t(无符号整型) 打印时应该使用%zu来打印 但是如果用一个int(有符号位)变量来接收 编译器是不会报警告的 
+//	return 0;
+//}
+
+
+//2_三子棋的实现
+//思路:
+//1_先打印一个菜单 询问是否游戏-->0/1/错误
+//2_游戏-->打印棋盘 并让玩家和电脑一起下棋 不游戏-->回到菜单
+//棋盘大概长相：
+//	 |	 |
+//___|___|___
+//	 |	 |
+//___|___|___
+//   |   |   
+//	 |	 |
+//3_玩家下棋/电脑下棋 并实时判断是否有胜者 是否平局
+//4_回到菜单 是否继续？
+//我们来实现一下：
+#define Row 3
+#define Col 3
+void menu()
+{
+	printf("*************************\n");
+	printf("******* 是否游玩？*******\n");
+	printf("******游玩:1 退出:2******\n");
+}
+void printboard(char chessboard[Row][Col],int row,int col)
+{
+	int i = 0;
+	for (i = 0; i < Row; i++)
+	{
+		int j = 0;
+		for ( j = 0; j < Col; j++)
+		{
+			chessboard[i][j] = ' ';
+		}
+	}
+	for (int i = 0; i < Row; i++)
+	{
+		for (int j = 0; j < Col; j++)
+		{
+			if (j < Col - 1)
+			{
+				printf(" %c |", chessboard[i][j]);
+				
+			}
+			else
+				printf(" %c \n", chessboard[i][j]);
+		}
+		if (i<Row-1)
+		{
+			for (int j = 0; j < Col; j++)
+			{
+				if (j < Col - 1)
+			{
+					printf("---|");
+			}
+				else
+					printf("---\n");
+			}
+		}
+	}
+}
+void playermove(char chessboard[Row][Col], int row, int col)
+{
+	int x, y = 0;
+	printf("玩家下棋-->请输入 n,n \n");
+	scanf("%d,%d", &x, &y);
+	while (true)
+	{
+		if (x>0 && x<=row && y>0 && y<=col)
+		{
+			if (chessboard[x - 1][y - 1] == ' ')
+			{
+				chessboard[x - 1][y - 1] = '*';
+				break;
+			}
+			else
+				printf("该坐标已被占用 请重新输入\n");
+		}
+		else
+			printf("坐标非法！请重新输入试试\n");
+	}
+}
+void computermove(char chessboard[Row][Col], int row, int col)
+{
+	int x = rand() % row;
+	int y = rand() % col;
+	chessboard[x][y] = '#';
+}
+char judge(chessboard)
+{
+	
+
+}
+void game()
+{
+	char chessboard[Row][Col] = { 0 };
+	printboard(chessboard,Row,Col);
+	while (1)
+	{
+		playermove(chessboard, Row, Col);
+		char judge=ionwin(chessboard);
+		if (judge=='y')
+		{
+			printf("YOU WIN!");
+			break;
+		}
+		else if (judge=='t')
+		{
+			printf("STALEMATE!");
+			break;
+		}
+		compumove(chessboard, Row, Col);
+		judge = ionwin(chessboard);
+		if (judge == 'n')
+		{
+			printf("YOU LOSE!");
+			break;
+		}
+		else if (judge == 't')
+		{
+			printf("STALEMATE!");
+			break;
+		}
+	}
+}
+
+int main()
+{
+	int input = 0;
+	srand((unsigned int)time(NULL));
+	do
+	{
+		menu();
+		scanf("%d", &input);
+		switch (input)
+		{
+		case 1:
+			printf("进入游戏...\n");
+			game();
+			break;
+		case 2:
+			printf("退出游戏...\n");
+			break;
+		default:
+			printf("选择错误！请重新选择！\n");
+			break;
+		}
+	} while (input);
+
+	return 0;
+}
